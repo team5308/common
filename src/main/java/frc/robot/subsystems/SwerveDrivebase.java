@@ -73,8 +73,11 @@ public class SwerveDrivebase extends SubsystemBase {
     for(int i=0;i<4;i++){
       if (Math.abs(forward)< 0.01|| Math.abs(strafe)<0.01|| Math.abs(rotation)<0.01){
         angles[i] = mSwerveModules[i].getHeading();
+        mSwerveModules[i].set(angles[i], 0);
       }
-      mSwerveModules[i].set(angles[i], speeds[i]);
+      else{
+        mSwerveModules[i].set(angles[i], speeds[i]);
+      }
     }
 
 

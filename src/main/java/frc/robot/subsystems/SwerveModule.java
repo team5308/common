@@ -213,4 +213,22 @@ public class SwerveModule {
     setModuleAngle(target);
   }
 
+
+  //Test methods, will be deleted
+  public void turnRight(){
+    angleMotor.set(ControlMode.PercentOutput, 0.3);
+  }
+
+  public void turnLeft(){
+    angleMotor.set(ControlMode.PercentOutput, -0.3);
+  }
+
+  public void stopRotation(){
+    angleMotor.set(ControlMode.Position, angleMotor.getSelectedSensorPosition());
+  }
+
+  public void setZeroHeading(){
+    set(0, 0);
+  }
+
 }
