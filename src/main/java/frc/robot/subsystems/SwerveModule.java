@@ -40,19 +40,19 @@ public class SwerveModule {
     angleMotor.setNeutralMode(NeutralMode.Brake);
     driveMotor.setNeutralMode(NeutralMode.Brake);
   
-    // TalonFXConfiguration angleTalonFXConfiguration = new TalonFXConfiguration();
+    TalonFXConfiguration angleTalonFXConfiguration = new TalonFXConfiguration();
 
-    // // angleTalonFXConfiguration.slot0.kP = Constants.kAngleP;
-    // // angleTalonFXConfiguration.slot0.kI = Constants.kAngleI;
-    // // angleTalonFXConfiguration.slot0.kD = Constants.kAngleD;
+    angleTalonFXConfiguration.slot0.kP = Constants.kAngleP;
+    angleTalonFXConfiguration.slot0.kI = Constants.kAngleI;
+    angleTalonFXConfiguration.slot0.kD = Constants.kAngleD;
 
 
-    // TalonFXConfiguration driveTalonFXConfiguration = new TalonFXConfiguration();
+    TalonFXConfiguration driveTalonFXConfiguration = new TalonFXConfiguration();
 
-    // driveTalonFXConfiguration.slot0.kP = Constants.kDriveP;
-    // driveTalonFXConfiguration.slot0.kI = Constants.kDriveI;
-    // driveTalonFXConfiguration.slot0.kD = Constants.kDriveD;
-    // driveTalonFXConfiguration.slot0.kF = Constants.kDriveF;
+    driveTalonFXConfiguration.slot0.kP = Constants.kDriveP;
+    driveTalonFXConfiguration.slot0.kI = Constants.kDriveI;
+    driveTalonFXConfiguration.slot0.kD = Constants.kDriveD;
+    driveTalonFXConfiguration.slot0.kF = Constants.kDriveF;
 
   }
 
