@@ -4,8 +4,6 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.*;
@@ -17,7 +15,7 @@ import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 
 import frc.robot.Constants;
 
-public class SwerveModule extends SubsystemBase {
+public class SwerveModule {
   /** Creates a new SwerveModule. */
   public TalonFX driveMotor;
   public TalonFX angleMotor;
