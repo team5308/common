@@ -4,10 +4,8 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.Logger;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.TalonFXSensorCollection;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.*;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
@@ -149,7 +147,7 @@ public class SwerveModule {
 
   }
 
-
+//checked
   public void set(double heading, double drive){
     if(shouldDriveBackwards(heading, getHeading())){
       setHeadingTarget(heading + 180);
@@ -162,11 +160,11 @@ public class SwerveModule {
     }
   }
 
-
+//checked
   public static boolean shouldDriveBackwards(double goalAngle, double currentAngle){
     goalAngle = keepWithin360deg(goalAngle);
     currentAngle = keepWithin360deg(currentAngle);
-    double reversedAngle = keepWithin360deg(goalAngle + 180);
+    double reversedAngle = keepWithin360deg(currentAngle + 180);
     double angleDifference = Math.abs(goalAngle - currentAngle);
     double reversedAngleDifference = Math.abs(goalAngle - reversedAngle);
 
@@ -178,23 +176,24 @@ public class SwerveModule {
     if (reversedAngleDifference > 180){
       reversedAngleDifference = 360 - reversedAngleDifference;
     }
+    else{}
 
     return reversedAngleDifference < angleDifference;
   }
 
-
+//checked
   public static double keepWithin360deg(double angle){
     while (angle >= 360.0){angle -= 360.0;}
     while (angle < 0.0){angle += 360.0;}
     return angle;
   }
 
-
+//checked
   public void setDrivePercent(double percentOutput){
     driveMotor.set(ControlMode.PercentOutput, percentOutput);
   }
   
-
+//checked
   public void setHeadingTarget(double degrees){
     double target = degrees;
     double position = getHeading();
