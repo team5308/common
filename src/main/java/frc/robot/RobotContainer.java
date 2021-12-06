@@ -8,14 +8,13 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.SwerveDriveCommand;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.SwerveDrivebase;
 import frc.robot.subsystems.SwerveModule;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -31,8 +30,10 @@ public class RobotContainer {
   private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
 
 
-  public Joystick m_leftJoy = new Joystick(0);
-  public Joystick m_rightJoy = new Joystick(1);
+  private Joystick m_leftJoy = new Joystick(0);
+  private Joystick m_rightJoy = new Joystick(1);
+
+  private final SwerveDriveCommand m_swerveDriveCommand = new SwerveDriveCommand(m_swerveDrivebase, m_leftJoy, m_rightJoy);
 
 
   private JoystickButton m_leftButton1 = new JoystickButton(m_leftJoy, 1);
@@ -44,6 +45,7 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
+    m_swerveDrivebase.setDefaultCommand(m_swerveDriveCommand);
   }
 
   /**
@@ -73,11 +75,5 @@ public class RobotContainer {
     // An ExampleCommand will run in autonomous
     return m_autoCommand;
   }
-
-  public void teleopInit(){
-    // final Command swerveDriveCommand = new RunCommand(() -> m_swerveDrivebase.holonomicDrive(m_leftJoy.getY(), m_leftJoy.getX(), m_rightJoy.getX()));
-    // m_swerveDrivebase.setDefaultCommand(swerveDriveCommand);
-}
-
   
 }

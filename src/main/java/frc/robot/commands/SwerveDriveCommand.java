@@ -4,29 +4,30 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+
+import frc.robot.subsystems.SwerveDrivebase;
 
 public class SwerveDriveCommand extends CommandBase {
   /** Creates a new SwerveDriveCommand. */
-  public SwerveDriveCommand() {
-    // Use addRequirements() here to declare subsystem dependencies.
-  }
+  SwerveDrivebase m_swerveDrivebase;
+  Joystick m_leftJoy;
+  Joystick m_rightJoy;
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {}
+  public SwerveDriveCommand(SwerveDrivebase m_swerveDrivebase, Joystick m_leftJoy, Joystick m_rightJoy) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(m_swerveDrivebase);
+
+    this.m_swerveDrivebase = m_swerveDrivebase;
+    this.m_leftJoy = m_leftJoy;
+    this.m_rightJoy = m_rightJoy;
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
-
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {}
-
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return false;
+  public void execute() {
+     m_swerveDrivebase.holonomicDrive(m_leftJoy.getY(), m_leftJoy.getX(), m_rightJoy.getX());
   }
+
 }

@@ -178,7 +178,7 @@ public class SwerveModule {
     }
     else{}
 
-    return reversedAngleDifference < angleDifference;
+    return (reversedAngleDifference < angleDifference);
   }
 
 //checked
@@ -194,7 +194,7 @@ public class SwerveModule {
   }
   
 //checked
-  public void setHeadingTarget(double degrees){
+public void setHeadingTarget(double degrees){
     double target = degrees;
     double position = getHeading();
 

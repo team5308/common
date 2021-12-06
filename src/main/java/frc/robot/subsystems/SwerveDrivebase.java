@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants;
@@ -36,18 +37,21 @@ public class SwerveDrivebase extends SubsystemBase {
 
   public void holonomicDrive(double forward, double strafe, double rotation){
 
-
     forward *= Math.abs(forward);
     strafe *= Math.abs(strafe);
     rotation *= Math.abs(rotation);
+
+    SmartDashboard.putNumber("forward", forward);
+    SmartDashboard.putNumber("strafe", strafe);
+    SmartDashboard.putNumber("rotation", rotation);
 
     //a front right
     //b front left
     //c back left
     //d back right
-    double a = strafe - rotation * (Constants.WHEELBASE/Constants.TRACKWIDTH);
-    double b = strafe + rotation * (Constants.WHEELBASE/Constants.TRACKWIDTH);
-    double c = forward - rotation * (Constants.WHEELBASE/Constants.TRACKWIDTH);
+    double a = strafe + rotation * (Constants.WHEELBASE/Constants.TRACKWIDTH);
+    double b = strafe - rotation * (Constants.WHEELBASE/Constants.TRACKWIDTH);
+    double c = forward + rotation * (Constants.WHEELBASE/Constants.TRACKWIDTH);
     double d = forward - rotation * (Constants.WHEELBASE/Constants.TRACKWIDTH);
 
     double[] angles = new double[]{
@@ -71,8 +75,10 @@ public class SwerveDrivebase extends SubsystemBase {
         max = speed;
       }
 
-    for(int i=0;i<4;i++){
-      speeds[i] = speeds[i]/max;
+    if(max>1){
+      for(int i=0;i<4;i++){
+        speeds[i] = speeds[i]/max;
+      }
     }
 
     for(int i=0;i<4;i++){
@@ -96,6 +102,5 @@ public class SwerveDrivebase extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-
   }
 }
