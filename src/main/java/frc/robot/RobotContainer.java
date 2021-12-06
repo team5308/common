@@ -35,9 +35,9 @@ public class RobotContainer {
 
 
   private JoystickButton m_leftButton1 = new JoystickButton(m_leftJoy, 1);
-  private JoystickButton m_leftButton2 = new JoystickButton(m_leftJoy, 1);
-  private JoystickButton m_leftButton3 = new JoystickButton(m_leftJoy, 1);
-  private JoystickButton m_leftButton4 = new JoystickButton(m_leftJoy, 1);
+  private JoystickButton m_leftButton2 = new JoystickButton(m_leftJoy, 2);
+  private JoystickButton m_leftButton3 = new JoystickButton(m_leftJoy, 3);
+  private JoystickButton m_leftButton4 = new JoystickButton(m_leftJoy, 4);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -59,7 +59,8 @@ public class RobotContainer {
     m_leftButton2.whenPressed(new InstantCommand(new SwerveModule(Constants.RIGHT_FRONT_DRIVE_CAN, Constants.RIGHT_FRONT_ANGLE_CAN)::turnLeft)).whenReleased(new InstantCommand(new SwerveModule(Constants.RIGHT_FRONT_DRIVE_CAN, Constants.RIGHT_FRONT_ANGLE_CAN)::stopRotation));
     m_leftButton2.whenPressed(new InstantCommand(new SwerveModule(Constants.LEFT_BACK_DRIVE_CAN, Constants.LEFT_BACK_ANGLE_CAN)::turnLeft)).whenReleased(new InstantCommand(new SwerveModule(Constants.LEFT_BACK_DRIVE_CAN, Constants.LEFT_BACK_ANGLE_CAN)::stopRotation));
 
-    m_leftButton3.whenPressed(new InstantCommand(new SwerveModule(Constants.RIGHT_FRONT_DRIVE_CAN, Constants.RIGHT_FRONT_ANGLE_CAN)::setZeroHeading)).whenReleased(new SwerveModule(Constants.RIGHT_FRONT_DRIVE_CAN, Constants.RIGHT_FRONT_ANGLE_CAN)::stopRotation);
+    m_leftButton3.whenPressed(new InstantCommand(m_swerveDrivebase.mRightFrontModule::setZeroHeading));
+    m_leftButton3.whenPressed(new InstantCommand(m_swerveDrivebase.mLeftBackModule::setZeroHeading));
   }
 
   /**

@@ -4,11 +4,17 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.Logger;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.TalonFXSensorCollection;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.*;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 
@@ -21,10 +27,10 @@ public class SwerveModule {
   public TalonFX angleMotor;
   private double moduleInitialPosition;
   //Heading is in degree, read from absolute position of external CANCoder
-  private double moduleInitialHeading = 0;
-  private double calibratedInitialHeading = 0;
+  private double moduleInitialHeading;
+  private double calibratedInitialHeading;
   //offset is in degree, negative or positive, absolute value from 0 to 360.
-  private double offset = 0;
+  private double offset;
 
   //construct an CANCoder
   private CANCoder canCoder;
@@ -34,8 +40,14 @@ public class SwerveModule {
   public SwerveModule(int driveMotorID, int angleMotorID) {
     this.driveMotor = new TalonFX(driveMotorID);
     this.angleMotor = new TalonFX(angleMotorID);
-    moduleInitialPosition = angleMotor.getSelectedSensorPosition();
 
+    driveMotor.configFactoryDefault();
+    angleMotor.configFactoryDefault();
+
+    angleMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
+    driveMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
+
+    moduleInitialPosition = angleMotor.getSelectedSensorPosition();
 
     angleMotor.setNeutralMode(NeutralMode.Brake);
     driveMotor.setNeutralMode(NeutralMode.Brake);
@@ -54,12 +66,17 @@ public class SwerveModule {
     driveTalonFXConfiguration.slot0.kD = Constants.kDriveD;
     driveTalonFXConfiguration.slot0.kF = Constants.kDriveF;
 
+    //Config PID here
+    angleMotor.configAllSettings(angleTalonFXConfiguration);
+    driveMotor.configAllSettings(driveTalonFXConfiguration);
+
   }
 
     //Construct a module with a CANCoder. Offset is in degree. Offset is the value of the encoder when the wheel points to a desired direction.
     public SwerveModule(int driveMotorID, int angleMotorID, int encoderID, double offset) {
       this.driveMotor = new TalonFX(driveMotorID);
       this.angleMotor = new TalonFX(angleMotorID);
+
       this.moduleInitialPosition = canCoder.getPosition();
 
       //declare an CANCoder
@@ -109,31 +126,15 @@ public class SwerveModule {
     return (deltaAngle * (Constants.kAngleEncoderTicksPerRotation * Constants.kEncoderGearRatio)) / 360.0;
   }
 
-
+//checked
   public double getHeading() {
     double deltaPosition = angleMotor.getSelectedSensorPosition() - moduleInitialPosition;
     double deltaAngle = convertDeltaUnitToAngle(deltaPosition) + calibratedInitialHeading;
     return keepWithin360deg(deltaAngle);
   }
 
-  //For CANCoder
-  // public double convertDeltaUnitToAngle(double deltaPosition){
-  //   return (deltaPosition * 360.0)/(Constants.kACANCoderTicksPerRotation * Constants.kCANCoderGearRatio);
-  // }
-  
 
-  // public double convertDeltaAngleToUnit(double deltaAngle){
-  //   return (deltaAngle * (Constants.kCANCoderTicksPerRotation * Constants.kCANCoderGearRatio)) / 360.0;
-  // }
-  
-
-  // public double getHeading() {
-  //   double deltaPosition = canCoder.getPosition() - moduleInitialPosition;
-  //   double deltaAngle = convertDeltaUnitToAngle(deltaPosition) + calibratedInitialHeading;
-  //   return keepWithin360deg(deltaAngle);
-  // }
-
-
+  //checked
   //For built-in encoder
   //rotate the module to an angle (0 to 360)
   public void setModuleAngle(double desiredPosition){
@@ -141,26 +142,17 @@ public class SwerveModule {
     double deltaAngle = desiredPosition - currentPosition;
 
     double deltaUnit = convertDeltaAngleToUnit(deltaAngle);
+    SmartDashboard.putNumber("converted delta unit", deltaUnit);
+    SmartDashboard.putNumber("target unit position",(angleMotor.getSelectedSensorPosition() + deltaUnit));
 
-    angleMotor.setSelectedSensorPosition((angleMotor.getSelectedSensorPosition() + deltaUnit)); //TODO: Change relationship of feedback&feed device
+    angleMotor.set(ControlMode.Position,((angleMotor.getSelectedSensorPosition() + deltaUnit)));
 
   }
-
-  //For CANCoder
-  // public void setModuleAngle(double desiredPosition){
-  //   double currentPosition = getHeading();
-  //   double deltaAngle = desiredPosition - currentPosition;
-
-  //   double deltaUnit = convertDeltaAngleToUnit(deltaAngle);
-
-  //   angleMotor.setSelectedSensorPosition((canCoder.getPosition() + deltaUnit));
-
-  // }
 
 
   public void set(double heading, double drive){
     if(shouldDriveBackwards(heading, getHeading())){
-      setHeadingTarget(heading+180);
+      setHeadingTarget(heading + 180);
       setDrivePercent(-drive);
     }
 
@@ -174,14 +166,18 @@ public class SwerveModule {
   public static boolean shouldDriveBackwards(double goalAngle, double currentAngle){
     goalAngle = keepWithin360deg(goalAngle);
     currentAngle = keepWithin360deg(currentAngle);
-    double reversedAngle = keepWithin360deg(goalAngle);
+    double reversedAngle = keepWithin360deg(goalAngle + 180);
     double angleDifference = Math.abs(goalAngle - currentAngle);
     double reversedAngleDifference = Math.abs(goalAngle - reversedAngle);
 
-    if (angleDifference>180){
-      angleDifference = 360-angleDifference;
+    if (angleDifference > 180){
+      angleDifference = 360 - angleDifference;
     }
     else{}
+
+    if (reversedAngleDifference > 180){
+      reversedAngleDifference = 360 - reversedAngleDifference;
+    }
 
     return reversedAngleDifference < angleDifference;
   }
@@ -227,8 +223,9 @@ public class SwerveModule {
     angleMotor.set(ControlMode.Position, angleMotor.getSelectedSensorPosition());
   }
 
+  //Can set to zero heading now but some logic of determine whether we should reverse drive force contains error.
   public void setZeroHeading(){
-    set(0, 0);
+    set(0, 0.2);
   }
 
 }

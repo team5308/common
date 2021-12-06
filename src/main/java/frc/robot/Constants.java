@@ -19,13 +19,13 @@ public final class Constants {
     public static final double kDriveD = 0.1;
     public static final double kDriveF = 0.2;
 
-    public static final double kAngleP = 1.0;
-    public static final double kAngleI = 0.0;
-    public static final double kAngleD = 0.0;
+    public static final double kAngleP = 0.3;
+    public static final double kAngleI = 0;
+    public static final double kAngleD = 0;
 
     public static final double kAngleEncoderTicksPerRotation = 2048;
     public static final double kCANCoderTicksPerRotation = 4096;
-    public static final double kEncoderGearRatio = (40.0*32.0/(15.0*10.0));
+    public static final double kEncoderGearRatio = (60.0*32.0/(15.0*10.0)); //60??40??
     // public static final double kCANCoderGearRatio = 1;
     public static final double kDriveGearRatio = 6.86;
 

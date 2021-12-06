@@ -10,14 +10,19 @@ import frc.robot.Constants;
 
 public class SwerveDrivebase extends SubsystemBase {
   SwerveModule[] mSwerveModules;
-  private SwerveModule mRightFrontModule = new SwerveModule(Constants.RIGHT_FRONT_DRIVE_CAN, Constants.RIGHT_FRONT_ANGLE_CAN);
-  private SwerveModule mLeftFrontModule = new SwerveModule(Constants.LEFT_FRONT_DRIVE_CAN, Constants.LEFT_FRONT_ANGLE_CAN);
-  private SwerveModule mLeftBackModule = new SwerveModule(Constants.LEFT_BACK_DRIVE_CAN, Constants.LEFT_BACK_ANGLE_CAN);
-  private SwerveModule mRightBackModule = new SwerveModule(Constants.RIGHT_BACK_DRIVE_CAN, Constants.RIGHT_BACK_ANGLE_CAN);
+  //TODO: change public to private
+  public SwerveModule mRightFrontModule;
+  private SwerveModule mLeftFrontModule;
+  public SwerveModule mLeftBackModule;
+  private SwerveModule mRightBackModule;
 
 
   /** Creates a new SwerveDrivebase. */
   public SwerveDrivebase() {
+    this.mRightFrontModule = new SwerveModule(Constants.RIGHT_FRONT_DRIVE_CAN, Constants.RIGHT_FRONT_ANGLE_CAN);
+    this.mLeftFrontModule = new SwerveModule(Constants.LEFT_FRONT_DRIVE_CAN, Constants.LEFT_FRONT_ANGLE_CAN);
+    this.mLeftBackModule = new SwerveModule(Constants.LEFT_BACK_DRIVE_CAN, Constants.LEFT_BACK_ANGLE_CAN);
+    this.mRightBackModule = new SwerveModule(Constants.RIGHT_BACK_DRIVE_CAN, Constants.RIGHT_BACK_ANGLE_CAN);
     SwerveModule[] mSwerveModules = new SwerveModule[]{
       mRightFrontModule,
       mLeftFrontModule,
@@ -71,13 +76,14 @@ public class SwerveDrivebase extends SubsystemBase {
     }
 
     for(int i=0;i<4;i++){
-      if (Math.abs(forward)< 0.01|| Math.abs(strafe)<0.01|| Math.abs(rotation)<0.01){
-        angles[i] = mSwerveModules[i].getHeading();
-        mSwerveModules[i].set(angles[i], 0);
+      if (Math.abs(forward) > 0.01|| Math.abs(strafe) > 0.01 || Math.abs(rotation) > 0.01){
+        mSwerveModules[i].setHeadingTarget(angles[i]);
       }
       else{
-        mSwerveModules[i].set(angles[i], speeds[i]);
+        mSwerveModules[i].setHeadingTarget(mSwerveModules[i].getHeading());
       }
+
+      mSwerveModules[i].setDrivePercent(speeds[i]);
     }
 
 
