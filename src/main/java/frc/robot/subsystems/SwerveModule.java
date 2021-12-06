@@ -111,20 +111,22 @@ public class SwerveModule {
       driveTalonFXConfiguration.slot0.kI = Constants.kDriveI;
       driveTalonFXConfiguration.slot0.kD = Constants.kDriveD;
       driveTalonFXConfiguration.slot0.kF = Constants.kDriveF;
+
+      driveMotor.configAllSettings(driveTalonFXConfiguration);
   
     }
 
-    //For built-in encoder
-  public double convertDeltaUnitToAngle(double deltaPosition){
+  //For built-in encoder
+  private double convertDeltaUnitToAngle(double deltaPosition){
     return (deltaPosition * 360.0)/(Constants.kAngleEncoderTicksPerRotation * Constants.kEncoderGearRatio);
   }
 
-
-  public double convertDeltaAngleToUnit(double deltaAngle){
+  //For built-in encoder
+  private double convertDeltaAngleToUnit(double deltaAngle){
     return (deltaAngle * (Constants.kAngleEncoderTicksPerRotation * Constants.kEncoderGearRatio)) / 360.0;
   }
 
-//checked
+  
   public double getHeading() {
     double deltaPosition = angleMotor.getSelectedSensorPosition() - moduleInitialPosition;
     double deltaAngle = convertDeltaUnitToAngle(deltaPosition) + calibratedInitialHeading;
@@ -132,10 +134,10 @@ public class SwerveModule {
   }
 
 
-  //checked
+
   //For built-in encoder
   //rotate the module to an angle (0 to 360)
-  public void setModuleAngle(double desiredPosition){
+  private void setModuleAngle(double desiredPosition){
     double currentPosition = getHeading();
     double deltaAngle = desiredPosition - currentPosition;
 
@@ -147,7 +149,7 @@ public class SwerveModule {
 
   }
 
-//checked
+
   public void set(double heading, double drive){
     if(shouldDriveBackwards(heading, getHeading())){
       setHeadingTarget(heading + 180);
@@ -160,7 +162,7 @@ public class SwerveModule {
     }
   }
 
-//checked
+
   public static boolean shouldDriveBackwards(double goalAngle, double currentAngle){
     goalAngle = keepWithin360deg(goalAngle);
     currentAngle = keepWithin360deg(currentAngle);
@@ -181,50 +183,32 @@ public class SwerveModule {
     return (reversedAngleDifference < angleDifference);
   }
 
-//checked
+
   public static double keepWithin360deg(double angle){
     while (angle >= 360.0){angle -= 360.0;}
     while (angle < 0.0){angle += 360.0;}
     return angle;
   }
 
-//checked
+
   public void setDrivePercent(double percentOutput){
     driveMotor.set(ControlMode.PercentOutput, percentOutput);
   }
   
-//checked
-public void setHeadingTarget(double degrees){
+  //Do NOT use directly
+  private void setHeadingTarget(double degrees){
     double target = degrees;
     double position = getHeading();
 
-    while(position-target>180){
-      target+=360;
+    while(position - target>180){
+      target += 360;
     }
-    while(target-position>180){
-      target-=360;
+    while(target - position>180){
+      target -= 360;
     }
 
     setModuleAngle(target);
   }
 
-
-  //Test methods, will be deleted
-  public void turnRight(){
-    angleMotor.set(ControlMode.PercentOutput, 0.3);
-  }
-
-  public void turnLeft(){
-    angleMotor.set(ControlMode.PercentOutput, -0.3);
-  }
-
-  public void stopRotation(){
-    angleMotor.set(ControlMode.Position, angleMotor.getSelectedSensorPosition());
-  }
-
-  //Can set to zero heading now but some logic of determine whether we should reverse drive force contains error.
-  public void setZeroHeading(){
-    set(0, 0.2);
-  }
 
 }

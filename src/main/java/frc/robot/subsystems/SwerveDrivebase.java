@@ -6,16 +6,22 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.Timer;
+
+import com.kauailabs.navx.frc.AHRS;
 
 import frc.robot.Constants;
 
 public class SwerveDrivebase extends SubsystemBase {
   SwerveModule[] mSwerveModules;
   //TODO: change public to private
-  public SwerveModule mRightFrontModule;
+  private SwerveModule mRightFrontModule;
   private SwerveModule mLeftFrontModule;
-  public SwerveModule mLeftBackModule;
+  private SwerveModule mLeftBackModule;
   private SwerveModule mRightBackModule;
+
+  private AHRS m_navX;
 
 
   /** Creates a new SwerveDrivebase. */
@@ -24,6 +30,13 @@ public class SwerveDrivebase extends SubsystemBase {
     this.mLeftFrontModule = new SwerveModule(Constants.LEFT_FRONT_DRIVE_CAN, Constants.LEFT_FRONT_ANGLE_CAN);
     this.mLeftBackModule = new SwerveModule(Constants.LEFT_BACK_DRIVE_CAN, Constants.LEFT_BACK_ANGLE_CAN);
     this.mRightBackModule = new SwerveModule(Constants.RIGHT_BACK_DRIVE_CAN, Constants.RIGHT_BACK_ANGLE_CAN);
+
+    this.m_navX = new AHRS(SPI.Port.kMXP);
+
+    //navX calibration
+    m_navX.calibrate();
+    m_navX.reset();
+
     SwerveModule[] mSwerveModules = new SwerveModule[]{
       mRightFrontModule,
       mLeftFrontModule,
@@ -31,28 +44,38 @@ public class SwerveDrivebase extends SubsystemBase {
       mRightBackModule
     };
     this.mSwerveModules = mSwerveModules;
-
-
   }
 
+  
   public void holonomicDrive(double forward, double strafe, double rotation){
 
-    forward *= Math.abs(forward);
-    strafe *= Math.abs(strafe);
+    //Field Oriented Driving
+    double temp = forward * Math.cos(getDrivetrainHeading()) + strafe * Math.sin(getDrivetrainHeading());
+    strafe = -forward * Math.sin(getDrivetrainHeading()) + strafe * Math.cos(getDrivetrainHeading());
+    forward = temp;
     rotation *= Math.abs(rotation);
+
+    //Traditional Driving
+    // forward *= Math.abs(forward);
+    // strafe *= Math.abs(strafe);
+    // rotation *= Math.abs(rotation);
 
     SmartDashboard.putNumber("forward", forward);
     SmartDashboard.putNumber("strafe", strafe);
     SmartDashboard.putNumber("rotation", rotation);
 
+    double L = Constants.WHEELBASE;
+    double W = Constants.TRACKWIDTH;
+    double R = Math.sqrt(Math.pow(L,2) + Math.pow(W,2));
+
     //a front right
     //b front left
     //c back left
     //d back right
-    double a = strafe - rotation * (Constants.WHEELBASE/Constants.TRACKWIDTH);
-    double b = strafe + rotation * (Constants.WHEELBASE/Constants.TRACKWIDTH);
-    double c = forward - rotation * (Constants.WHEELBASE/Constants.TRACKWIDTH);
-    double d = forward + rotation * (Constants.WHEELBASE/Constants.TRACKWIDTH);
+    double a = strafe - rotation * (L/R);
+    double b = strafe + rotation * (L/R);
+    double c = forward - rotation * (W/R);
+    double d = forward + rotation * (W/R);
 
     double[] angles = new double[]{
       Math.atan2(b,c)*180 / Math.PI,
@@ -83,24 +106,39 @@ public class SwerveDrivebase extends SubsystemBase {
 
     for(int i=0;i<4;i++){
       if (Math.abs(forward) > 0.01|| Math.abs(strafe) > 0.01 || Math.abs(rotation) > 0.01){
-        mSwerveModules[i].setHeadingTarget(angles[i]);
+        mSwerveModules[i].set(angles[i],speeds[i]);
       }
       else{
-        mSwerveModules[i].setHeadingTarget(mSwerveModules[i].getHeading());
+        mSwerveModules[i].set(mSwerveModules[i].getHeading(), speeds[i]);
       }
-
-      mSwerveModules[i].setDrivePercent(speeds[i]);
     }
-
 
     
     }
 
+  }
+  
+
+  public double getDrivetrainHeading(){
+    SmartDashboard.putNumber("Drivetrain Heading", SwerveModule.keepWithin360deg(m_navX.getAngle()));
+    return SwerveModule.keepWithin360deg(m_navX.getAngle());
+  }
+
+  public double getVelocityX(){
+    SmartDashboard.putNumber("X Dist", m_navX.getVelocityX());
+    return m_navX.getVelocityX();
+  }
+
+  public double getVelocityY(){
+    SmartDashboard.putNumber("Y Dist", m_navX.getVelocityY());
+    return m_navX.getVelocityY();
   }
 
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    getDrivetrainHeading();
+    Timer.delay(2);
   }
 }

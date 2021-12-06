@@ -30,4 +30,9 @@ public class SwerveDriveCommand extends CommandBase {
      m_swerveDrivebase.holonomicDrive(m_leftJoy.getY(), m_leftJoy.getX(), m_rightJoy.getX());
   }
 
+  @Override
+  public boolean isFinished() {
+     return true;
+  }
+
 }
