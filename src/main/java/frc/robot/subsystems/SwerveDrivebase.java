@@ -49,10 +49,10 @@ public class SwerveDrivebase extends SubsystemBase {
     //b front left
     //c back left
     //d back right
-    double a = strafe + rotation * (Constants.WHEELBASE/Constants.TRACKWIDTH);
-    double b = strafe - rotation * (Constants.WHEELBASE/Constants.TRACKWIDTH);
-    double c = forward + rotation * (Constants.WHEELBASE/Constants.TRACKWIDTH);
-    double d = forward - rotation * (Constants.WHEELBASE/Constants.TRACKWIDTH);
+    double a = strafe - rotation * (Constants.WHEELBASE/Constants.TRACKWIDTH);
+    double b = strafe + rotation * (Constants.WHEELBASE/Constants.TRACKWIDTH);
+    double c = forward - rotation * (Constants.WHEELBASE/Constants.TRACKWIDTH);
+    double d = forward + rotation * (Constants.WHEELBASE/Constants.TRACKWIDTH);
 
     double[] angles = new double[]{
       Math.atan2(b,c)*180 / Math.PI,
