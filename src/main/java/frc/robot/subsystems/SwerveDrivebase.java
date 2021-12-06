@@ -15,7 +15,6 @@ import frc.robot.Constants;
 
 public class SwerveDrivebase extends SubsystemBase {
   SwerveModule[] mSwerveModules;
-  //TODO: change public to private
   private SwerveModule mRightFrontModule;
   private SwerveModule mLeftFrontModule;
   private SwerveModule mLeftBackModule;
@@ -125,13 +124,17 @@ public class SwerveDrivebase extends SubsystemBase {
   }
 
   public double getVelocityX(){
-    SmartDashboard.putNumber("X Dist", m_navX.getVelocityX());
+    SmartDashboard.putNumber("Vx", m_navX.getVelocityX());
     return m_navX.getVelocityX();
   }
 
   public double getVelocityY(){
-    SmartDashboard.putNumber("Y Dist", m_navX.getVelocityY());
+    SmartDashboard.putNumber("Vy", m_navX.getVelocityY());
     return m_navX.getVelocityY();
+  }
+
+  public void resetGyro(){
+    m_navX.reset();
   }
 
 

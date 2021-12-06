@@ -8,11 +8,9 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.AutonomousForward;
 import frc.robot.commands.SwerveDriveCommand;
-import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.SwerveDrivebase;
-import frc.robot.subsystems.SwerveModule;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
@@ -24,10 +22,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private final SwerveDrivebase m_swerveDrivebase = new SwerveDrivebase();
 
-  private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
+  private final AutonomousForward m_autoForward = new AutonomousForward();
 
 
   private Joystick m_leftJoy = new Joystick(0);
@@ -37,9 +34,7 @@ public class RobotContainer {
 
 
   private JoystickButton m_leftButton1 = new JoystickButton(m_leftJoy, 1);
-  private JoystickButton m_leftButton2 = new JoystickButton(m_leftJoy, 2);
-  private JoystickButton m_leftButton3 = new JoystickButton(m_leftJoy, 3);
-  private JoystickButton m_leftButton4 = new JoystickButton(m_leftJoy, 4);
+
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -54,7 +49,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-
+    m_leftButton1.whenPressed(new InstantCommand(m_swerveDrivebase::resetGyro));
   }
 
   /**
@@ -64,7 +59,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return m_autoCommand;
+    return m_autoForward;
   }
 
   public void teleopInit(){
