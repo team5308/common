@@ -29,7 +29,7 @@ public class SwerveDriveCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-     m_swerveDrivebase.holonomicDrive(-m_xboxController.getY(GenericHID.Hand.kLeft), m_xboxController.getX(GenericHID.Hand.kLeft), m_xboxController.getX(GenericHID.Hand.kRight));
+     m_swerveDrivebase.holonomicDrive(-m_xboxController.getY(GenericHID.Hand.kLeft), -m_xboxController.getX(GenericHID.Hand.kLeft), m_xboxController.getX(GenericHID.Hand.kRight));
   }
 
   @Override

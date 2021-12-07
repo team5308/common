@@ -77,6 +77,7 @@ public class SwerveModule {
 
       angleMotor.setSelectedSensorPosition(0);
 
+      
       this.moduleInitialPosition = canCoder.getPosition();
 
       //declare an CANCoder
