@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.AutonomousForward;
+import frc.robot.commands.ForwardStrafeRotationSupplier;
 import frc.robot.commands.SwerveDriveCommand;
 import frc.robot.subsystems.SwerveDrivebase;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -30,7 +31,9 @@ public class RobotContainer {
   private Joystick m_leftJoy = new Joystick(0);
   private Joystick m_rightJoy = new Joystick(1);
 
-  private final SwerveDriveCommand m_swerveDriveCommand = new SwerveDriveCommand(m_swerveDrivebase, m_leftJoy, m_rightJoy);
+
+  private final ForwardStrafeRotationSupplier m_supplier = new ForwardStrafeRotationSupplier(m_leftJoy, m_rightJoy);
+  private final SwerveDriveCommand m_swerveDriveCommand = new SwerveDriveCommand(m_swerveDrivebase, m_supplier);
 
 
   private JoystickButton m_leftButton1 = new JoystickButton(m_leftJoy, 1);
@@ -62,7 +65,13 @@ public class RobotContainer {
     return m_autoForward;
   }
 
+  public void autonomousInit(){
+    m_supplier.schedule();
+    
+  }
+
   public void teleopInit(){
+    m_supplier.schedule();
     m_swerveDrivebase.setDefaultCommand(m_swerveDriveCommand);
   }
 
