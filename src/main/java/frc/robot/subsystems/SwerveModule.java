@@ -11,8 +11,6 @@ import com.ctre.phoenix.motorcontrol.can.*;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 
@@ -134,16 +132,10 @@ public class SwerveModule {
   }
 
 
-
   //For built-in encoder
-  //rotate the module to an angle (0 to 360)
-  private void setModuleAngle(double desiredPosition){
-    double currentPosition = getHeading();
-    double deltaAngle = desiredPosition - currentPosition;
-
-    double deltaUnit = convertDeltaAngleToUnit(deltaAngle);
-    SmartDashboard.putNumber("converted delta unit", deltaUnit);
-    SmartDashboard.putNumber("target unit position",(angleMotor.getSelectedSensorPosition() + deltaUnit));
+  //rotate the module with a change in angle supplied by setHeadingTarget, converted into raw sensor units for motors to operate
+  private void setAngleChange(double desiredChange){
+    double deltaUnit = convertDeltaAngleToUnit(desiredChange);
 
     angleMotor.set(ControlMode.Position,((angleMotor.getSelectedSensorPosition() + deltaUnit)));
 
@@ -162,7 +154,7 @@ public class SwerveModule {
     }
   }
 
-
+//Checked
   public static boolean shouldDriveBackwards(double goalAngle, double currentAngle){
     goalAngle = keepWithin360deg(goalAngle);
     currentAngle = keepWithin360deg(currentAngle);
@@ -195,7 +187,7 @@ public class SwerveModule {
     driveMotor.set(ControlMode.PercentOutput, percentOutput);
   }
   
-  //Do NOT use directly
+  //Angle needs to be set by the module.
   private void setHeadingTarget(double degrees){
     double target = degrees;
     double position = getHeading();
@@ -207,7 +199,7 @@ public class SwerveModule {
       target -= 360;
     }
 
-    setModuleAngle(target);
+    setAngleChange(target);
   }
 
 
