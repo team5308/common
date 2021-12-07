@@ -27,16 +27,12 @@ public class RobotContainer {
 
   private final AutonomousForward m_autoForward = new AutonomousForward();
 
-
-  private Joystick m_leftJoy = new Joystick(0);
-  private Joystick m_rightJoy = new Joystick(1);
+  private final XboxController m_xboxController = new XboxController(0);
 
 
   // private final ForwardStrafeRotationSupplier m_supplier = new ForwardStrafeRotationSupplier(m_leftJoy, m_rightJoy);
-  private final SwerveDriveCommand m_swerveDriveCommand = new SwerveDriveCommand(m_swerveDrivebase, m_leftJoy, m_rightJoy);
+  private final SwerveDriveCommand m_swerveDriveCommand = new SwerveDriveCommand(m_swerveDrivebase, m_xboxController);
 
-
-  private JoystickButton m_leftButton1 = new JoystickButton(m_leftJoy, 1);
 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -52,7 +48,6 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    m_leftButton1.whenPressed(new InstantCommand(m_swerveDrivebase::resetGyro));
   }
 
   /**

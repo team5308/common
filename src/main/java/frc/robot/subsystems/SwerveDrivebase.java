@@ -46,6 +46,7 @@ public class SwerveDrivebase extends SubsystemBase {
 
   
   public void holonomicDrive(double forward, double strafe, double rotation){
+    
 
     //Traditional Driving
     forward *= Math.abs(forward);
@@ -64,10 +65,11 @@ public class SwerveDrivebase extends SubsystemBase {
     //b front left
     //c back left
     //d back right
+    //Weired Signs, but it worked
     double a = strafe - rotation * (L/R);
-    double b = strafe + rotation * (L/R);
+    double b = strafe - rotation * (L/R);
     double c = forward - rotation * (W/R);
-    double d = forward + rotation * (W/R);
+    double d = forward - rotation * (W/R);
 
     double[] angles = new double[]{
       Math.atan2(b,c)*180.0 / Math.PI,

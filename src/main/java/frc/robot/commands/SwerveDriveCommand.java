@@ -4,8 +4,9 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj.GenericHID;
 
 import frc.robot.subsystems.SwerveDrivebase;
 
@@ -13,23 +14,22 @@ public class SwerveDriveCommand extends CommandBase {
   /** Creates a new SwerveDriveCommand. */
   SwerveDrivebase m_swerveDrivebase;
   ForwardStrafeRotationSupplier m_supplier;
-  Joystick m_leftJoy;
-  Joystick m_rightJoy;
 
-  public SwerveDriveCommand(SwerveDrivebase m_swerveDrivebase, Joystick m_leftJoy, Joystick m_rightJoy) {
+  XboxController m_xboxController;
+
+  public SwerveDriveCommand(SwerveDrivebase m_swerveDrivebase, XboxController m_xboxController) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_swerveDrivebase);
 
     this.m_swerveDrivebase = m_swerveDrivebase;
-    this.m_supplier = m_supplier;
-    this.m_leftJoy = m_leftJoy;
-    this.m_rightJoy = m_rightJoy;
+    // this.m_supplier = m_supplier;
+    this.m_xboxController = m_xboxController;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-     m_swerveDrivebase.holonomicDrive(m_leftJoy.getY(), m_leftJoy.getX(), m_rightJoy.getX());
+     m_swerveDrivebase.holonomicDrive(-m_xboxController.getY(GenericHID.Hand.kLeft), m_xboxController.getX(GenericHID.Hand.kLeft), m_xboxController.getX(GenericHID.Hand.kRight));
   }
 
   @Override

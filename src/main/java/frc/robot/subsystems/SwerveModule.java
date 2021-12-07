@@ -75,6 +75,8 @@ public class SwerveModule {
       this.driveMotor = new TalonFX(driveMotorID);
       this.angleMotor = new TalonFX(angleMotorID);
 
+      angleMotor.setSelectedSensorPosition(0);
+
       this.moduleInitialPosition = canCoder.getPosition();
 
       //declare an CANCoder
