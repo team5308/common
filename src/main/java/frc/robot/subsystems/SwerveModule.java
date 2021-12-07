@@ -94,7 +94,7 @@ public class SwerveModule {
   
   
       angleMotor.setNeutralMode(NeutralMode.Brake);
-      driveMotor.setNeutralMode(NeutralMode.Brake);
+      driveMotor.setNeutralMode(NeutralMode.Coast);
     
       TalonFXConfiguration angleTalonFXConfiguration = new TalonFXConfiguration();
   
@@ -138,24 +138,14 @@ public class SwerveModule {
   }
 
 
-  //For built-in encoder
-  //Error descripton here: rotate the module with a change in angle supplied by setHeadingTarget, converted into raw sensor units for motors to operate
-  private void setModuleAngle(double deltaAngle){
-
-    SmartDashboard.putNumber("delta Angle", deltaAngle);
-
-    angleMotor.set(ControlMode.Position,((angleMotor.getSelectedSensorPosition() + deltaAngle)));
-  }
-
-
   public void set(double heading, double drive){
     if(shouldDriveBackwards(heading, getHeading())){
-      setHeadingTarget(heading + 180);
+      setModuleHeading(heading + 180);
       setDrivePercent(-drive);
     }
 
     else{
-      setHeadingTarget(heading);
+      setModuleHeading(heading);
       setDrivePercent(drive);
     }
   }
@@ -178,7 +168,7 @@ public class SwerveModule {
     }
     else{}
 
-    return (reversedAngleDifference <= angleDifference);
+    return (reversedAngleDifference < angleDifference);
   }
 
 
@@ -193,8 +183,8 @@ public class SwerveModule {
     driveMotor.set(ControlMode.PercentOutput, percentOutput);
   }
   
-  //Angle needs to be set by the module.
-  private void setHeadingTarget(double degrees){
+  //the target value is absolute, but is not optimized
+  private void setModuleHeading(double degrees){
     double target = degrees;
     double position = getHeading();
 
@@ -207,6 +197,19 @@ public class SwerveModule {
 
     setModuleAngle(target);
   }
+
+    //For built-in encoder
+    //The module moves to a desired position, look at set() method to understand logic.
+    private void setModuleAngle(double desiredPosition){
+      double currentPosition = getHeading();
+      double deltaAngle = desiredPosition - currentPosition;
+  
+      double deltaUnit = convertDeltaAngleToUnit(deltaAngle);
+  
+      SmartDashboard.putNumber("delta Angle", deltaAngle);
+  
+      angleMotor.set(ControlMode.Position,((angleMotor.getSelectedSensorPosition() + deltaUnit)));
+    }
 
 
 }
