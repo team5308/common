@@ -138,18 +138,20 @@ public class SwerveModule {
   }
 
 
-  public void set(double heading, double drive){
-    if(shouldDriveBackwards(heading, getHeading())){
+  public void set(double heading, double drive) {
+    this.set(heading, drive, true);
+  }
+
+  public void set(double heading, double drive, boolean EnableDriveBackwards){
+    if(EnableDriveBackwards && shouldDriveBackwards(heading, getHeading())){
       setModuleHeading(heading + 180);
       setDrivePercent(-drive);
     }
-
     else{
       setModuleHeading(heading);
       setDrivePercent(drive);
     }
   }
-
 
   public static boolean shouldDriveBackwards(double goalAngle, double currentAngle){
     goalAngle = keepWithin360deg(goalAngle);
