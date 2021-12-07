@@ -33,6 +33,7 @@ public class SwerveModule {
   //construct an CANCoder
   private CANCoder canCoder;
 
+
   //Construct a module without a CANCoder, encoder from angle motor is used directly, not encouraged. Before each match, modules should be aligned manually.
   //TODO: Will be removed once CANCoder is installed onto the module.
   public SwerveModule(int driveMotorID, int angleMotorID) {
@@ -77,7 +78,7 @@ public class SwerveModule {
 
       angleMotor.setSelectedSensorPosition(0);
 
-      
+
       this.moduleInitialPosition = canCoder.getPosition();
 
       //declare an CANCoder
@@ -139,12 +140,11 @@ public class SwerveModule {
 
   //For built-in encoder
   //Error descripton here: rotate the module with a change in angle supplied by setHeadingTarget, converted into raw sensor units for motors to operate
-  private void setModuleAngle(double desiredPosition){
-    double currentPosition = getHeading();
-    double deltaAngle = desiredPosition - currentPosition;
+  private void setModuleAngle(double deltaAngle){
 
-    double deltaUnit = convertDeltaAngleToUnit(deltaAngle);
-    angleMotor.set(ControlMode.Position,((angleMotor.getSelectedSensorPosition() + deltaUnit)));
+    SmartDashboard.putNumber("delta Angle", deltaAngle);
+
+    angleMotor.set(ControlMode.Position,((angleMotor.getSelectedSensorPosition() + deltaAngle)));
   }
 
 
@@ -206,7 +206,6 @@ public class SwerveModule {
     }
 
     setModuleAngle(target);
-    SmartDashboard.putNumber("setModleAngleIN", target);
   }
 
 
