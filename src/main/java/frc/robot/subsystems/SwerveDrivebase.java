@@ -7,7 +7,6 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.Timer;
 
 import com.kauailabs.navx.frc.AHRS;
 
@@ -30,11 +29,11 @@ public class SwerveDrivebase extends SubsystemBase {
     this.mLeftBackModule = new SwerveModule(Constants.LEFT_BACK_DRIVE_CAN, Constants.LEFT_BACK_ANGLE_CAN);
     this.mRightBackModule = new SwerveModule(Constants.RIGHT_BACK_DRIVE_CAN, Constants.RIGHT_BACK_ANGLE_CAN);
 
-    this.m_navX = new AHRS(SPI.Port.kMXP);
+    // this.m_navX = new AHRS(SPI.Port.kMXP);
 
-    //navX calibration
-    m_navX.calibrate();
-    m_navX.reset();
+    // //navX calibration
+    // m_navX.calibrate();
+    // m_navX.reset();
 
     SwerveModule[] mSwerveModules = new SwerveModule[]{
       mRightFrontModule,
@@ -48,16 +47,10 @@ public class SwerveDrivebase extends SubsystemBase {
   
   public void holonomicDrive(double forward, double strafe, double rotation){
 
-    //Field Oriented Driving
-    double temp = forward * Math.cos(getDrivetrainHeading()) + strafe * Math.sin(getDrivetrainHeading());
-    strafe = -forward * Math.sin(getDrivetrainHeading()) + strafe * Math.cos(getDrivetrainHeading());
-    forward = temp;
-    rotation *= Math.abs(rotation);
-
     //Traditional Driving
-    // forward *= Math.abs(forward);
-    // strafe *= Math.abs(strafe);
-    // rotation *= Math.abs(rotation);
+    forward *= Math.abs(forward);
+    strafe *= Math.abs(strafe);
+    rotation *= Math.abs(rotation);
 
     SmartDashboard.putNumber("forward", forward);
     SmartDashboard.putNumber("strafe", strafe);
@@ -77,10 +70,10 @@ public class SwerveDrivebase extends SubsystemBase {
     double d = forward + rotation * (W/R);
 
     double[] angles = new double[]{
-      Math.atan2(b,c)*180 / Math.PI,
-      Math.atan2(b,d)*180 / Math.PI,
-      Math.atan2(a,d)*180 / Math.PI,
-      Math.atan2(a,c)*180 / Math.PI,
+      Math.atan2(b,c)*180.0 / Math.PI,
+      Math.atan2(b,d)*180.0 / Math.PI,
+      Math.atan2(a,d)*180.0 / Math.PI,
+      Math.atan2(a,c)*180.0 / Math.PI,
     };
 
     double[] speeds = new double[]{
@@ -108,7 +101,7 @@ public class SwerveDrivebase extends SubsystemBase {
         mSwerveModules[i].set(angles[i],speeds[i]);
       }
       else{
-        mSwerveModules[i].set(mSwerveModules[i].getHeading(), speeds[i]);
+        mSwerveModules[i].set(mSwerveModules[i].getHeading(), 0);
       }
     }
 
@@ -119,8 +112,8 @@ public class SwerveDrivebase extends SubsystemBase {
   
 
   public double getDrivetrainHeading(){
-    SmartDashboard.putNumber("Drivetrain Heading", SwerveModule.keepWithin360deg(m_navX.getAngle()));
-    return SwerveModule.keepWithin360deg(m_navX.getAngle());
+    SmartDashboard.putNumber("Drivetrain Heading",SwerveModule.keepWithin360deg(Math.round(m_navX.getAngle())));
+    return SwerveModule.keepWithin360deg(Math.round(m_navX.getAngle()));
   }
 
   public double getVelocityX(){
@@ -141,7 +134,5 @@ public class SwerveDrivebase extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    getDrivetrainHeading();
-    Timer.delay(2);
   }
 }

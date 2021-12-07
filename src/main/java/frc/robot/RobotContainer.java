@@ -32,8 +32,8 @@ public class RobotContainer {
   private Joystick m_rightJoy = new Joystick(1);
 
 
-  private final ForwardStrafeRotationSupplier m_supplier = new ForwardStrafeRotationSupplier(m_leftJoy, m_rightJoy);
-  private final SwerveDriveCommand m_swerveDriveCommand = new SwerveDriveCommand(m_swerveDrivebase, m_supplier);
+  // private final ForwardStrafeRotationSupplier m_supplier = new ForwardStrafeRotationSupplier(m_leftJoy, m_rightJoy);
+  private final SwerveDriveCommand m_swerveDriveCommand = new SwerveDriveCommand(m_swerveDrivebase, m_leftJoy, m_rightJoy);
 
 
   private JoystickButton m_leftButton1 = new JoystickButton(m_leftJoy, 1);
@@ -66,17 +66,14 @@ public class RobotContainer {
   }
 
   public void autonomousInit(){
-    m_supplier.schedule();
-    
+
   }
 
   public void teleopInit(){
-    m_supplier.schedule();
+    // m_supplier.schedule();
     m_swerveDrivebase.setDefaultCommand(m_swerveDriveCommand);
   }
 
-  public void disabledInit() {
-    m_swerveDriveCommand.isFinished();
-  }
+  public void disabledInit() {}
   
 }

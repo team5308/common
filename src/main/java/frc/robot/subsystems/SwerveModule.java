@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
@@ -19,8 +21,8 @@ import frc.robot.Constants;
 
 public class SwerveModule {
   /** Creates a new SwerveModule. */
-  public TalonFX driveMotor;
-  public TalonFX angleMotor;
+  private TalonFX driveMotor;
+  private TalonFX angleMotor;
   private double moduleInitialPosition;
   //Heading is in degree, read from absolute position of external CANCoder
   private double moduleInitialHeading;
@@ -133,12 +135,13 @@ public class SwerveModule {
 
 
   //For built-in encoder
-  //rotate the module with a change in angle supplied by setHeadingTarget, converted into raw sensor units for motors to operate
-  private void setAngleChange(double desiredChange){
-    double deltaUnit = convertDeltaAngleToUnit(desiredChange);
+  //Error descripton here: rotate the module with a change in angle supplied by setHeadingTarget, converted into raw sensor units for motors to operate
+  private void setModuleAngle(double desiredPosition){
+    double currentPosition = getHeading();
+    double deltaAngle = desiredPosition - currentPosition;
 
+    double deltaUnit = convertDeltaAngleToUnit(deltaAngle);
     angleMotor.set(ControlMode.Position,((angleMotor.getSelectedSensorPosition() + deltaUnit)));
-
   }
 
 
@@ -154,7 +157,7 @@ public class SwerveModule {
     }
   }
 
-//Checked
+
   public static boolean shouldDriveBackwards(double goalAngle, double currentAngle){
     goalAngle = keepWithin360deg(goalAngle);
     currentAngle = keepWithin360deg(currentAngle);
@@ -172,7 +175,7 @@ public class SwerveModule {
     }
     else{}
 
-    return (reversedAngleDifference < angleDifference);
+    return (reversedAngleDifference <= angleDifference);
   }
 
 
@@ -199,7 +202,8 @@ public class SwerveModule {
       target -= 360;
     }
 
-    setAngleChange(target);
+    setModuleAngle(target);
+    SmartDashboard.putNumber("setModleAngleIN", target);
   }
 
 
