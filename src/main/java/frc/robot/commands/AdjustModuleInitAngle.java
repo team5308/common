@@ -15,6 +15,7 @@ public class AdjustModuleInitAngle extends CommandBase {
 
   XboxController m_xboxController;
   public static int num_of_mod = 0;
+  public static double offset = 0;
   public static XboxController m_XboxController = new XboxController(0);
   public AdjustModuleInitAngle(SwerveDrivebase m_swerveDrivebase) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -32,9 +33,18 @@ public class AdjustModuleInitAngle extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    SmartDashboard.putNumber("Angle Adjust Module #", num_of_mod)
-    if(m_XboxController.getBButtonReleased()) {
-      num_of_mod++;
+    SmartDashboard.putNumber("Angle Adjust Module #", num_of_mod);
+    // kBumperLeft = 5, kBumperRight = 6
+    if(m_XboxController.getRawButtonPressed(5)) {
+      offset += 1;
+    } else if (m_XboxController.getRawButtonPressed(6)) {
+      offset -= 1;
+    }
+    m_swerveDrivebase.getModule(num_of_mod).applyTempOffset(offset);
+
+    if(m_XboxController.getStartButtonPressed()) {
+      m_swerveDrivebase.getModule(num_of_mod).persistOffset(offset);
+      offset = 0;
     }
   }
 

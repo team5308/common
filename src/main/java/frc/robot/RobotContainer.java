@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.AdjustModuleInitAngle;
 import frc.robot.commands.AutonomousForward;
 import frc.robot.commands.ForwardStrafeRotationSupplier;
@@ -59,6 +60,8 @@ public class RobotContainer {
         {
           AdjustModuleInitAngle.num_of_mod++;
           AdjustModuleInitAngle.num_of_mod %= 4;
+          SmartDashboard.putNumber("# Adjust Module", AdjustModuleInitAngle.num_of_mod);
+          AdjustModuleInitAngle.offset = 0;
         }
     });
   }

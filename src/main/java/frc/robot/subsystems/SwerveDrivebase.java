@@ -153,4 +153,8 @@ public class SwerveDrivebase extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
   }
+
+  public SwerveModule getModule(int port) {
+    return this.mSwerveModules[port];
+  }
 }

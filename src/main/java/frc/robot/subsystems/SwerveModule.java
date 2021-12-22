@@ -40,6 +40,8 @@ public class SwerveModule {
     this.driveMotor = new TalonFX(driveMotorID);
     this.angleMotor = new TalonFX(angleMotorID);
 
+    angleMotor.setSelectedSensorPosition(0);
+
     driveMotor.configFactoryDefault();
     angleMotor.configFactoryDefault();
 
@@ -49,7 +51,7 @@ public class SwerveModule {
     moduleInitialPosition = angleMotor.getSelectedSensorPosition();
 
     angleMotor.setNeutralMode(NeutralMode.Brake);
-    driveMotor.setNeutralMode(NeutralMode.Brake);
+    driveMotor.setNeutralMode(NeutralMode.Coast);
   
     TalonFXConfiguration angleTalonFXConfiguration = new TalonFXConfiguration();
 
@@ -89,8 +91,7 @@ public class SwerveModule {
       this.moduleInitialHeading = canCoder.getAbsolutePosition();
 
       //Read from Constants.
-      this.offset = offset;
-      calibratedInitialHeading = this.moduleInitialHeading - this.offset;
+      this.construct_offset(offset);
   
   
       angleMotor.setNeutralMode(NeutralMode.Brake);
@@ -120,6 +121,12 @@ public class SwerveModule {
   
     }
 
+  private void construct_offset(double offset)
+  {
+    this.offset = offset;
+    calibratedInitialHeading = this.moduleInitialHeading - this.offset;
+  }
+
   //For built-in encoder
   private double convertDeltaUnitToAngle(double deltaPosition){
     return (deltaPosition * 360.0)/(Constants.kAngleEncoderTicksPerRotation * Constants.kEncoderGearRatio);
@@ -133,7 +140,7 @@ public class SwerveModule {
   
   public double getHeading() {
     double deltaPosition = angleMotor.getSelectedSensorPosition() - moduleInitialPosition;
-    double deltaAngle = convertDeltaUnitToAngle(deltaPosition) + calibratedInitialHeading;
+    double deltaAngle = convertDeltaUnitToAngle(deltaPosition + calibratedInitialHeading);
     return keepWithin360deg(deltaAngle);
   }
 
@@ -213,5 +220,16 @@ public class SwerveModule {
       angleMotor.set(ControlMode.Position,((angleMotor.getSelectedSensorPosition() + deltaUnit)));
     }
 
+    public void applyTempOffset(double deltaAngle)
+    {
+      SmartDashboard.putNumber("Temp Delta Angle", deltaAngle);
+      double deltaUnit = convertDeltaAngleToUnit(deltaAngle);
+      angleMotor.set(ControlMode.Position, ((this.offset + deltaUnit)));
+    }
+
+    public void persistOffset(double deltAngle)
+    {
+      this.construct_offset(convertDeltaAngleToUnit(deltAngle) + this.offset);
+    }
 
 }
