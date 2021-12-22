@@ -6,11 +6,14 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.commands.AdjustModuleInitAngle;
 import frc.robot.commands.AutonomousForward;
 import frc.robot.commands.ForwardStrafeRotationSupplier;
 import frc.robot.commands.SwerveDriveCommand;
+import frc.robot.commands.SwitchModuleDefaultCmd;
 import frc.robot.subsystems.SwerveDrivebase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -31,7 +34,7 @@ public class RobotContainer {
 
 
   // private final ForwardStrafeRotationSupplier m_supplier = new ForwardStrafeRotationSupplier(m_leftJoy, m_rightJoy);
-  private final SwerveDriveCommand m_swerveDriveCommand = new SwerveDriveCommand(m_swerveDrivebase, m_xboxController);
+  // private final SwerveDriveCommand m_swerveDriveCommand = new SwerveDriveCommand(m_swerveDrivebase, m_xboxController);
 
 
 
@@ -48,6 +51,16 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    // port 3 : Xbox 'X'
+    (new JoystickButton(m_xboxController, 3)).whenPressed(new SwitchModuleDefaultCmd(m_swerveDrivebase));
+    // port 1 : Xbox 'A'
+    (new JoystickButton(m_xboxController, 1)).whenReleased(new InstantCommand(){
+        public void initialize()
+        {
+          AdjustModuleInitAngle.num_of_mod++;
+          AdjustModuleInitAngle.num_of_mod %= 4;
+        }
+    });
   }
 
   /**
@@ -66,7 +79,7 @@ public class RobotContainer {
 
   public void teleopInit(){
     // m_supplier.schedule();
-    m_swerveDrivebase.setDefaultCommand(m_swerveDriveCommand);
+    // m_swerveDrivebase.setDefaultCommand(m_swerveDriveCommand);
   }
 
   public void disabledInit() {}

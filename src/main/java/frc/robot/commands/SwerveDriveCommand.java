@@ -15,15 +15,17 @@ public class SwerveDriveCommand extends CommandBase {
   SwerveDrivebase m_swerveDrivebase;
   ForwardStrafeRotationSupplier m_supplier;
 
-  XboxController m_xboxController;
+  public static XboxController m_xboxController = new XboxController(0);
 
-  public SwerveDriveCommand(SwerveDrivebase m_swerveDrivebase, XboxController m_xboxController) {
+  public SwerveDriveCommand(SwerveDrivebase m_swerveDrivebase) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_swerveDrivebase);
 
     this.m_swerveDrivebase = m_swerveDrivebase;
     // this.m_supplier = m_supplier;
-    this.m_xboxController = m_xboxController;
+    // this.m_xboxController = m_xboxController;
+
+    this.setName("Drive_Command");
   }
 
   // Called every time the scheduler runs while the command is scheduled.

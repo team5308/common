@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.SPI;
 import com.kauailabs.navx.frc.AHRS;
 
 import frc.robot.Constants;
+import frc.robot.commands.AdjustModuleInitAngle;
+import frc.robot.commands.SwerveDriveCommand;
 
 public class SwerveDrivebase extends SubsystemBase {
   SwerveModule[] mSwerveModules;
@@ -42,6 +44,9 @@ public class SwerveDrivebase extends SubsystemBase {
       mRightBackModule
     };
     this.mSwerveModules = mSwerveModules;
+
+    this.setDriveCommand();
+
   }
 
   
@@ -132,6 +137,17 @@ public class SwerveDrivebase extends SubsystemBase {
     m_navX.reset();
   }
 
+  public void switchDefaultCMD()
+  {
+    if("Drive_Command".equals(this.getDefaultCommand().getName())) {
+      this.setDefaultCommand(new AdjustModuleInitAngle(this));
+    }
+  }
+
+  public void setDriveCommand()
+  {
+    this.setDefaultCommand(new SwerveDriveCommand(this));
+  }
 
   @Override
   public void periodic() {
