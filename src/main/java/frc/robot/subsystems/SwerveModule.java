@@ -33,10 +33,14 @@ public class SwerveModule {
   //construct an CANCoder
   private CANCoder canCoder;
 
+  public String name;
+
 
   //Construct a module without a CANCoder, encoder from angle motor is used directly, not encouraged. Before each match, modules should be aligned manually.
   //TODO: Will be removed once CANCoder is installed onto the module.
-  public SwerveModule(int driveMotorID, int angleMotorID) {
+  public SwerveModule(int driveMotorID, int angleMotorID, String name) {
+    this.name = name;
+  
     this.driveMotor = new TalonFX(driveMotorID);
     this.angleMotor = new TalonFX(angleMotorID);
 
@@ -230,6 +234,11 @@ public class SwerveModule {
     public void persistOffset(double deltAngle)
     {
       this.construct_offset(convertDeltaAngleToUnit(deltAngle) + this.offset);
+    }
+
+    public void display()
+    {
+      
     }
 
 }
