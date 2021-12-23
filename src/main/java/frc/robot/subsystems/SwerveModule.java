@@ -15,7 +15,7 @@ import com.ctre.phoenix.sensors.CANCoder;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
-
+import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 
 import frc.robot.Constants;
 

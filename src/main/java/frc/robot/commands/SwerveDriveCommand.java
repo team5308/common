@@ -28,10 +28,19 @@ public class SwerveDriveCommand extends CommandBase {
     this.setName("Drive_Command");
   }
 
+  public static double deadban(double x)
+  {
+    if(Math.abs(x) < 0.08) {
+      return 0;
+    } else {
+      return x;
+    }
+  }
+
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-     m_swerveDrivebase.holonomicDrive(-m_xboxController.getY(GenericHID.Hand.kLeft), m_xboxController.getX(GenericHID.Hand.kLeft), m_xboxController.getX(GenericHID.Hand.kRight));
+     m_swerveDrivebase.holonomicDrive(-deadban(m_xboxController.getY(GenericHID.Hand.kLeft)), deadban(m_xboxController.getX(GenericHID.Hand.kLeft)), m_xboxController.getX(GenericHID.Hand.kRight));
   }
 
   @Override

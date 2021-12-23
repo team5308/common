@@ -103,6 +103,9 @@ public class SwerveDrivebase extends SubsystemBase {
       }
     }
 
+    SmartDashboard.putNumberArray("Speed", speeds);
+    SmartDashboard.putNumberArray("Angle", angles);
+
     for(int i=0;i<4;i++){
       if (Math.abs(forward) > 0.01|| Math.abs(strafe) > 0.01 || Math.abs(rotation) > 0.01){
         mSwerveModules[i].set(angles[i],speeds[i]);
