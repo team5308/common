@@ -4,5 +4,19 @@
 
 package frc.robot;
 
+import com.revrobotics.CANEncoder;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 /** Add your docs here. */
-public class MagEncoder {}
+public class MagEncoder {
+    private CANSparkMax mSensor;
+    private CANEncoder mCanEncoder;
+
+    public MagEncoder(int CANSparkMaxPort) {
+        mSensor = new CANSparkMax(CANSparkMaxPort, MotorType.kBrushed);
+        mSensor.getEncoder()
+    }
+
+    
+}
