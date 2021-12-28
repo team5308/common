@@ -1,4 +1,4 @@
-package frc.robot.common;
+package frc.robot.common.SwerveEncoders;
 
 public interface SwerveAngleEncoder {
     /**
