@@ -1,13 +1,10 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.common;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
@@ -18,9 +15,15 @@ public class SwerveModule {
 
     private TalonFX driveMotor;
     private TalonFX angleMotor;
+    private SwerveAngleEncoder angleEncoder;
     private Translation2d moduleLoc;
-    
-    public SwerveModule(int driveMotorID, int angleMotorID, Translation2d sModuleLoc) {
+
+    public SwerveModule(Translation2d sModuleLoc, int driveMotorID, int angleMotorID, int encoderID)
+    {
+        this(sModuleLoc, driveMotorID, angleMotorID, encoderID, false);
+    }
+
+    public SwerveModule(Translation2d sModuleLoc, int driveMotorID, int angleMotorID, int encoderID, boolean isCANCoder) {
 
         this.driveMotor = new TalonFX(driveMotorID);
         this.angleMotor = new TalonFX(angleMotorID);
