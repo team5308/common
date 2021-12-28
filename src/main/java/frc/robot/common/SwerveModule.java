@@ -9,6 +9,8 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import frc.robot.Constants;
+import frc.robot.common.SwerveEncoders.SAECANCoder;
+import frc.robot.common.SwerveEncoders.SAEMagEncoderTSRX;
 import frc.robot.common.SwerveEncoders.SwerveAngleEncoder;
 
 /** Add your docs here. */
@@ -26,9 +28,17 @@ public class SwerveModule {
 
     public SwerveModule(Translation2d sModuleLoc, int driveMotorID, int angleMotorID, int encoderID, boolean isCANCoder) {
 
+        moduleLoc  = sModuleLoc;
+
         this.driveMotor = new TalonFX(driveMotorID);
         this.angleMotor = new TalonFX(angleMotorID);
-        this.moduleLoc  = sModuleLoc;
+
+        if(isCANCoder) {
+            angleEncoder = new SAECANCoder(encoderID);
+        } else {
+            angleEncoder = new SAEMagEncoderTSRX(encoderID);
+        }
+        
 
         angleMotor.setSelectedSensorPosition(0);
 
