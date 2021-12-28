@@ -1,7 +1,5 @@
 package frc.robot.common.SwerveEncoders;
 
-import frc.robot.common.SwerveEncoders.SwerveAngleEncoder;
-
 public abstract class BaseSwerveAngleEncoder implements SwerveAngleEncoder {
     public double mOffset = 0;
     public double mCof = 1;
