@@ -45,13 +45,12 @@ public class SwerveModule {
             angleEncoder = new SAEMagEncoderTSRX(encoderID);
         }
 
-        angleEncoder.setOffset(s_offset);
-
-        angleMotor.setSelectedSensorPosition(convertDeltaAngleToUnit(angleEncoder.getPosition()));
-        
+        angleEncoder.setOffset(s_offset);        
 
         angleMotor.setInverted(TalonFXInvertType.Clockwise);
         driveMotor.setInverted(TalonFXInvertType.Clockwise);
+
+        angleMotor.setSelectedSensorPosition(convertDeltaAngleToUnit(angleEncoder.getPosition()));
 
         angleMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
         driveMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);

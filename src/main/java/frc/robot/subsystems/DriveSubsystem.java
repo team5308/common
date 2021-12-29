@@ -35,8 +35,8 @@ public class DriveSubsystem extends SubsystemBase {
   public XboxController mXboxController = new XboxController(0);
 
   public DriveSubsystem() {
-    mSMrightfront = new SwerveModule(new Translation2d(0.36, 0.36), Constants.RIGHT_FRONT_DRIVE_CAN, Constants.RIGHT_FRONT_ANGLE_CAN, 13, 1807);
-    mSMleftback   = new SwerveModule(new Translation2d(-0.36, -0.36), Constants.LEFT_BACK_DRIVE_CAN,   Constants.LEFT_BACK_ANGLE_CAN,   33, 1550);
+    mSMrightfront = new SwerveModule(new Translation2d(0.36, 0.36), Constants.RIGHT_FRONT_DRIVE_CAN, Constants.RIGHT_FRONT_ANGLE_CAN, 13, 841);
+    mSMleftback   = new SwerveModule(new Translation2d(-0.36, -0.36), Constants.LEFT_BACK_DRIVE_CAN,   Constants.LEFT_BACK_ANGLE_CAN,   33, 960);
 
     mSMleftback.setName("Left Back");
     mSMrightfront.setName("Right Front");
@@ -46,26 +46,28 @@ public class DriveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    double leftX = db(mXboxController.getX(Hand.kLeft));
-    double leftY = db(-mXboxController.getY(Hand.kLeft));
+    double leftX = db(-mXboxController.getX(Hand.kLeft));
+    double leftY = db(mXboxController.getY(Hand.kLeft));
     double v_rad = db(mXboxController.getX(Hand.kRight));
-    // if( Math.abs(leftX) > 0.05 || Math.abs(leftY) > 0.05 || Math.abs(v_rad) > 0.05) {
-    //   ChassisSpeeds cSpeeds = new ChassisSpeeds(leftX * 0.5, leftY, v_rad);
-    //   mSwerveDrive.setMotion(cSpeeds);
-    // } else {
-    //   mSwerveDrive.setZeroSpeed();
-    // }
+    if( Math.abs(leftX) > 0.05 || Math.abs(leftY) > 0.05 || Math.abs(v_rad) > 0.05) {
+      ChassisSpeeds cSpeeds = new ChassisSpeeds(leftY, leftX, -v_rad);
+      mSwerveDrive.setMotion(cSpeeds);
+    } else {
+      mSwerveDrive.setZeroSpeed();
+    }
     // mSMleftback.angleMotor.set(ControlMode.PercentOutput, leftX);
     System.out.println(leftX);
     // mSMrightfront.setAngle(Rotation2d.fromDegrees(leftX * 180));
     // mSMrightfront.angleMotor.set(ControlMode.Position, mSMrightfront.start + mSMrightfront.convertDeltaAngleToUnit(360.0));
-      mSMrightfront.driveMotor.set(ControlMode.PercentOutput, leftX);
-      mSMleftback.driveMotor.set(ControlMode.PercentOutput, leftX);
-      mSMleftback.setAngle(Rotation2d.fromDegrees(0));
-      mSMrightfront.setAngle(Rotation2d.fromDegrees(0));
+      // mSMrightfront.driveMotor.set(ControlMode.PercentOutput, leftX);
+      // mSMleftback.driveMotor.set(ControlMode.PercentOutput, leftX);
+      // mSMleftback.setAngle(Rotation2d.fromDegrees(0));
+      // mSMrightfront.setAngle(Rotation2d.fromDegrees(0));
 
       SmartDashboard.putNumber("13_number", m13.getSelectedSensorPosition());
       SmartDashboard.putNumber("33_number", m33.getSelectedSensorPosition());
+
+
   }
 
   public static double db(double x)
