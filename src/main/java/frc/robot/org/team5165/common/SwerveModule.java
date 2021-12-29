@@ -1,4 +1,4 @@
-package frc.robot.common;
+package frc.robot.org.team5165.common;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -10,9 +10,9 @@ import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 import frc.robot.Constants;
-import frc.robot.common.SwerveEncoders.SAECANCoder;
-import frc.robot.common.SwerveEncoders.SAEMagEncoderTSRX;
-import frc.robot.common.SwerveEncoders.SwerveAngleEncoder;
+import frc.robot.org.team5165.common.SwerveEncoders.SAECANCoder;
+import frc.robot.org.team5165.common.SwerveEncoders.SAEMagEncoderTSRX;
+import frc.robot.org.team5165.common.SwerveEncoders.SwerveAngleEncoder;
 
 /** Add your docs here. */
 public class SwerveModule {
