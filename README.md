@@ -19,3 +19,6 @@ The following also needs to be added to your `settings.gradle` file:
 ```gradle
 include ':common'
 ```
+
+# Reference
+This repo is enlightened by FRC 2910 Common Repo.
