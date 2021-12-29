@@ -1,33 +1,38 @@
-package frc.robot.common;
+package frc.robot.org.team5165.common;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
-import frc.robot.common.SwerveEncoders.SAECANCoder;
-import frc.robot.common.SwerveEncoders.SAEMagEncoderTSRX;
-import frc.robot.common.SwerveEncoders.SwerveAngleEncoder;
+import frc.robot.org.team5165.common.SwerveEncoders.SAECANCoder;
+import frc.robot.org.team5165.common.SwerveEncoders.SAEMagEncoderTSRX;
+import frc.robot.org.team5165.common.SwerveEncoders.SwerveAngleEncoder;
 
 /** Add your docs here. */
 public class SwerveModule {
 
-    private TalonFX driveMotor;
-    private TalonFX angleMotor;
-    private SwerveAngleEncoder angleEncoder;
-    private Translation2d moduleLoc;
+    public TalonFX driveMotor;
+    public TalonFX angleMotor;
+    public SwerveAngleEncoder angleEncoder;
+    public Translation2d moduleLoc;
+    public String name;
 
-    public SwerveModule(Translation2d sModuleLoc, int driveMotorID, int angleMotorID, int encoderID)
+    public double start;
+
+    public SwerveModule(Translation2d sModuleLoc, int driveMotorID, int angleMotorID, int encoderID, double s_offset)
     {
-        this(sModuleLoc, driveMotorID, angleMotorID, encoderID, false);
+        this(sModuleLoc, driveMotorID, angleMotorID, encoderID, false, s_offset);
     }
 
-    public SwerveModule(Translation2d sModuleLoc, int driveMotorID, int angleMotorID, int encoderID, boolean isCANCoder) {
+    public SwerveModule(Translation2d sModuleLoc, int driveMotorID, int angleMotorID, int encoderID, boolean isCANCoder, double s_offset) {
 
         moduleLoc  = sModuleLoc;
 
@@ -39,9 +44,13 @@ public class SwerveModule {
         } else {
             angleEncoder = new SAEMagEncoderTSRX(encoderID);
         }
+
+        angleEncoder.setOffset(s_offset);
+
+        angleMotor.setSelectedSensorPosition(convertDeltaAngleToUnit(angleEncoder.getPosition()));
         
 
-        angleMotor.setSelectedSensorPosition(0);
+        angleMotor.setInverted(TalonFXInvertType.Clockwise);
 
         driveMotor.configFactoryDefault();
         angleMotor.configFactoryDefault();
@@ -60,6 +69,12 @@ public class SwerveModule {
         driveMotor.config_kI(0, Constants.kDriveI);
         driveMotor.config_kD(0, Constants.kDriveD);
         driveMotor.config_kF(0, Constants.kDriveF);
+
+        start = angleMotor.getSelectedSensorPosition();
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Translation2d getModulePosition() {
@@ -82,10 +97,11 @@ public class SwerveModule {
         }
         setSpeed(targetState.speedMetersPerSecond);
         setAngle(targetState.angle);
+        System.out.println(name + " Speed: " + targetState.speedMetersPerSecond + " Angle: " + targetState.angle + " current heading: " + getModuleHeading());
     }
 
     public void setSpeed(double speedMetersPerSec) {
-        driveMotor.set(ControlMode.Velocity, speedMetersPerSec);
+        driveMotor.set(ControlMode.PercentOutput, speedMetersPerSec);
     }
 
     /**
@@ -93,17 +109,27 @@ public class SwerveModule {
      * @param angle
      */
     public void setAngle(Rotation2d angle) {
-        double deltaDegree = angle.getDegrees() - getModuleHeading();
-        angleMotor.set(ControlMode.Position, convertDeltaAngleToUnit(deltaDegree) + angleMotor.getSelectedSensorPosition());
+        double deltaDegree = angle.getDegrees() - getHeading();
+        // double deltaDegree = angle.getDegrees();
+        System.out.println(deltaDegree+ " " + getHeading());
+        angleMotor.set(ControlMode.Position, angleMotor.getSelectedSensorPosition() + convertDeltaAngleToUnit(deltaDegree));
+    }
+
+    public double getHeading() {
+        return normalizeDegAngle(convertDeltaUnitToAngle(angleMotor.getSelectedSensorPosition()));
     }
 
     //For built-in encoder
-  private double convertDeltaUnitToAngle(double deltaPosition){
-    return (deltaPosition * 360.0)/(Constants.kAngleEncoderTicksPerRotation * Constants.kEncoderGearRatio);
-  }
+    public double convertDeltaUnitToAngle(double deltaPosition){
+        return (deltaPosition * 360.0)/(Constants.kAngleEncoderTicksPerRotation * Constants.kEncoderGearRatio);
+    }
 
-  //For built-in encoder
-  private double convertDeltaAngleToUnit(double deltaAngle){
-    return (deltaAngle * (Constants.kAngleEncoderTicksPerRotation * Constants.kEncoderGearRatio)) / 360.0;
-  }
+    //For built-in encoder
+    public double convertDeltaAngleToUnit(double deltaAngle){
+        return (deltaAngle * (Constants.kAngleEncoderTicksPerRotation)) / 360.0;
+    }
+
+    public static double normalizeDegAngle(double angle) {
+        return angle - 360.0 * ((int) (angle / 360) + (angle < 0 ? -1 : 0));
+    }
 }

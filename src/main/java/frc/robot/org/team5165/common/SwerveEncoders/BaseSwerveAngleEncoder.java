@@ -1,8 +1,8 @@
-package frc.robot.common.SwerveEncoders;
+package frc.robot.org.team5165.common.SwerveEncoders;
 
 public abstract class BaseSwerveAngleEncoder implements SwerveAngleEncoder {
     public double mOffset = 0;
-    public double mCof = 1;
+    public double mCof = 360.0 / 4096.0;
 
     @Override
     public void setOffset(double s_offset) {

@@ -8,14 +8,9 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.commands.AdjustModuleInitAngle;
-import frc.robot.commands.AutonomousForward;
-import frc.robot.commands.ForwardStrafeRotationSupplier;
-import frc.robot.commands.SwerveDriveCommand;
-import frc.robot.commands.SwitchModuleDefaultCmd;
-import frc.robot.subsystems.SwerveDrivebase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
@@ -27,12 +22,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final SwerveDrivebase m_swerveDrivebase = new SwerveDrivebase();
-
-  private final AutonomousForward m_autoForward = new AutonomousForward();
-
-  private final XboxController m_xboxController = new XboxController(0);
-
+  public final DriveSubsystem m_drive_subsystem = new DriveSubsystem();
 
   // private final ForwardStrafeRotationSupplier m_supplier = new ForwardStrafeRotationSupplier(m_leftJoy, m_rightJoy);
   // private final SwerveDriveCommand m_swerveDriveCommand = new SwerveDriveCommand(m_swerveDrivebase, m_xboxController);
@@ -53,17 +43,6 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // port 3 : Xbox 'X'
-    (new JoystickButton(m_xboxController, 3)).whenPressed(new SwitchModuleDefaultCmd(m_swerveDrivebase));
-    // port 1 : Xbox 'A'
-    (new JoystickButton(m_xboxController, 1)).whenReleased(new InstantCommand(){
-        public void initialize()
-        {
-          AdjustModuleInitAngle.num_of_mod++;
-          AdjustModuleInitAngle.num_of_mod %= 4;
-          SmartDashboard.putNumber("# Adjust Module", AdjustModuleInitAngle.num_of_mod);
-          AdjustModuleInitAngle.offset = 0;
-        }
-    });
   }
 
   /**
@@ -73,7 +52,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return m_autoForward;
+    return null;
   }
 
   public void autonomousInit(){

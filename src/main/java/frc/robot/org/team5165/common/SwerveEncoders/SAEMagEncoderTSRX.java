@@ -1,10 +1,12 @@
-package frc.robot.common.SwerveEncoders;
+package frc.robot.org.team5165.common.SwerveEncoders;
 
 import java.util.logging.Logger;
 
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SAEMagEncoderTSRX extends BaseSwerveAngleEncoder {
 
