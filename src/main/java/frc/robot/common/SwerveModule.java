@@ -7,7 +7,9 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.geometry.Transform2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 import frc.robot.Constants;
 import frc.robot.common.SwerveEncoders.SAECANCoder;
 import frc.robot.common.SwerveEncoders.SAEMagEncoderTSRX;
@@ -65,39 +67,44 @@ public class SwerveModule {
         return this.moduleLoc;
     }
 
-    private double convertDeltaUnitToAngle(double deltaPosition) {
-        return (deltaPosition * 360.0) / (Constants.kAngleEncoderTicksPerRotation * Constants.kEncoderGearRatio);
+    public double getModuleHeading() {
+        return angleEncoder.getPosition();
     }
 
-    private double convertDeltaAngleToUnit(double deltaAngle) {
-        return (deltaAngle * (Constants.kAngleEncoderTicksPerRotation * Constants.kEncoderGearRatio)) / 360.0;
+    public void setState(SwerveModuleState targetState)
+    {
+        this.setState(targetState, true);
     }
 
-    public double getHeading() {
-        double deltaPosition = angleMotor.getSelectedSensorPosition();
-        double deltaAngle = convertDeltaUnitToAngle(deltaPosition);
-        return keepWithin360deg(deltaAngle);
+    public void setState(SwerveModuleState targetState, boolean optimized) {
+        if (optimized) {
+            targetState = SwerveModuleState.optimize(targetState,
+                Rotation2d.fromDegrees(getModuleHeading()));
+        }
+        setSpeed(targetState.speedMetersPerSecond);
+        setAngle(targetState.angle);
     }
 
-    public static double keepWithin360deg(double angle) {
-        while (angle >= 360.0) { angle -= 360.0;}
-        while (angle  <   0.0) { angle += 360.0;}
-        return angle;
-    }
-    
-    public void set(double heading, double drive) {
-        this.set(heading, drive, true);
+    public void setSpeed(double speedMetersPerSec) {
+        driveMotor.set(ControlMode.Velocity, speedMetersPerSec);
     }
 
-    public void set(double heading, double drive, boolean EnableDriveBackwards) {
-
+    /**
+     *  to-do: Need to improve angle control algorithm
+     * @param angle
+     */
+    public void setAngle(Rotation2d angle) {
+        double deltaDegree = angle.getDegrees() - getModuleHeading();
+        angleMotor.set(ControlMode.Position, convertDeltaAngleToUnit(deltaDegree) + angleMotor.getSelectedSensorPosition());
     }
 
-    public void setDrivePercent(double percentOutput) {
-        driveMotor.set(ControlMode.PercentOutput, percentOutput);
-    }
+    //For built-in encoder
+  private double convertDeltaUnitToAngle(double deltaPosition){
+    return (deltaPosition * 360.0)/(Constants.kAngleEncoderTicksPerRotation * Constants.kEncoderGearRatio);
+  }
 
-    private void setModuleHeading(Rotation2d rotate) {
-        return ;
-    }
+  //For built-in encoder
+  private double convertDeltaAngleToUnit(double deltaAngle){
+    return (deltaAngle * (Constants.kAngleEncoderTicksPerRotation * Constants.kEncoderGearRatio)) / 360.0;
+  }
 }
