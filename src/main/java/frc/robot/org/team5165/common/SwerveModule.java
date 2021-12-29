@@ -51,9 +51,7 @@ public class SwerveModule {
         
 
         angleMotor.setInverted(TalonFXInvertType.Clockwise);
-
-        driveMotor.configFactoryDefault();
-        angleMotor.configFactoryDefault();
+        driveMotor.setInverted(TalonFXInvertType.Clockwise);
 
         angleMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
         driveMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
@@ -93,7 +91,7 @@ public class SwerveModule {
     public void setState(SwerveModuleState targetState, boolean optimized) {
         if (optimized) {
             targetState = SwerveModuleState.optimize(targetState,
-                Rotation2d.fromDegrees(getModuleHeading()));
+                Rotation2d.fromDegrees(getHeading()));
         }
         setSpeed(targetState.speedMetersPerSecond);
         setAngle(targetState.angle);
@@ -126,7 +124,7 @@ public class SwerveModule {
 
     //For built-in encoder
     public double convertDeltaAngleToUnit(double deltaAngle){
-        return (deltaAngle * (Constants.kAngleEncoderTicksPerRotation)) / 360.0;
+        return (deltaAngle * (Constants.kAngleEncoderTicksPerRotation * Constants.kEncoderGearRatio)) / 360.0;
     }
 
     public static double normalizeDegAngle(double angle) {
