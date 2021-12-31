@@ -1,11 +1,18 @@
 package frc.robot.org.team5165.common;
 
+import javax.swing.plaf.synth.SynthStyle;
+
+import com.ctre.phoenix.CANifier;
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
+import com.ctre.phoenix.motorcontrol.SensorTerm;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
@@ -50,9 +57,17 @@ public class SwerveModule {
         angleMotor.setInverted(TalonFXInvertType.Clockwise);
         driveMotor.setInverted(TalonFXInvertType.Clockwise);
 
-        angleMotor.setSelectedSensorPosition(convertDeltaAngleToUnit(angleEncoder.getPosition()));
+        
+        TalonSRX mTalonSRX = new TalonSRX(encoderID);
+        // mTalonSRX.ConfigRe(SensorTerm.Sum0, FeedbackDevice.CTRE_MagEncoder_Absolute);
+        mTalonSRX.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute);
+        mTalonSRX.configFeedbackNotContinuous(false, 1000);
+        angleMotor.configRemoteFeedbackFilter(mTalonSRX.getDeviceID(), RemoteSensorSource.TalonSRX_SelectedSensor, 0);
+        angleMotor.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0);
+        angleMotor.setSelectedSensorPosition(Utils.normalize(angleMotor.getSelectedSensorPosition() - s_offset, 4096));
+        angleMotor.configSelectedFeedbackCoefficient(360.0 / 4096.0);
 
-        angleMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
+        // angleMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
         driveMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
         
         angleMotor.setNeutralMode(NeutralMode.Brake);
@@ -79,7 +94,7 @@ public class SwerveModule {
     }
 
     public double getModuleHeading() {
-        return angleEncoder.getPosition();
+        return angleMotor.getSelectedSensorPosition();
     }
 
     public void setState(SwerveModuleState targetState)
@@ -89,12 +104,14 @@ public class SwerveModule {
 
     public void setState(SwerveModuleState targetState, boolean optimized) {
         if (optimized) {
+            System.out.println(name + " opt from: " + targetState.toString());
             targetState = SwerveModuleState.optimize(targetState,
                 Rotation2d.fromDegrees(getHeading()));
+                System.out.println("to: " + targetState.toString());
         }
-        setSpeed(targetState.speedMetersPerSecond);
+        // setSpeed(targetState.speedMetersPerSecond);
         setAngle(targetState.angle);
-        System.out.println(name + " Speed: " + targetState.speedMetersPerSecond + " Angle: " + targetState.angle + " current heading: " + getModuleHeading());
+        // System.out.println(name + " Speed: " + targetState.speedMetersPerSecond + " Angle: " + targetState.angle + " current heading: " + getModuleHeading());
     }
 
     public void setSpeed(double speedMetersPerSec) {
@@ -108,12 +125,23 @@ public class SwerveModule {
     public void setAngle(Rotation2d angle) {
         double deltaDegree = angle.getDegrees() - getHeading();
         // double deltaDegree = angle.getDegrees();
-        System.out.println(deltaDegree+ " " + getHeading());
-        angleMotor.set(ControlMode.Position, angleMotor.getSelectedSensorPosition() + convertDeltaAngleToUnit(deltaDegree));
+        if(Math.abs(deltaDegree) >= 180) {
+            if(deltaDegree < 0) {
+                deltaDegree += 360;
+            } else {
+                deltaDegree -= 360;
+            }
+        }
+        System.out.println(name + " " +deltaDegree+ " " + getHeading() + " " + angleMotor.getSelectedSensorPosition());
+        angleMotor.set(ControlMode.Position, angleMotor.getSelectedSensorPosition() + deltaDegree* (4096.0 / 360.0));
+    }
+
+    public void setAngle() {
+        angleMotor.set(ControlMode.Position, angleMotor.getSelectedSensorPosition());
     }
 
     public double getHeading() {
-        return normalizeDegAngle(convertDeltaUnitToAngle(angleMotor.getSelectedSensorPosition()));
+        return normalizeDegAngle(angleMotor.getSelectedSensorPosition() );
     }
 
     //For built-in encoder
@@ -127,6 +155,7 @@ public class SwerveModule {
     }
 
     public static double normalizeDegAngle(double angle) {
-        return angle - 360.0 * ((int) (angle / 360) + (angle < 0 ? -1 : 0));
+        double r = angle - 360.0 * ((int) (angle / 360) + (angle < 0 ? -1 : 0));
+        return (r - 360.0) >= 0 ? r - 360.0 : r;
     }
 }

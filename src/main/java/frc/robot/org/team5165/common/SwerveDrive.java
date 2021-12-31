@@ -67,6 +67,7 @@ public class SwerveDrive {
     public void setZeroSpeed() {
         for(int i = 0; i < mSwerveModules.length; i++) {
             mSwerveModules[i].setSpeed(0);
+            mSwerveModules[i].setAngle();
         }
     }
 

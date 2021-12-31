@@ -19,7 +19,7 @@ public final class Constants {
     public static final double kDriveD = 0.1;
     public static final double kDriveF = 0.2;
 
-    public static final double kAngleP = 0.1;
+    public static final double kAngleP = 0.4;
     public static final double kAngleI = 0;
     public static final double kAngleD = 0;
 

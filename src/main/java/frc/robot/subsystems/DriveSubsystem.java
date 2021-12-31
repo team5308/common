@@ -56,7 +56,7 @@ public class DriveSubsystem extends SubsystemBase {
       mSwerveDrive.setZeroSpeed();
     }
     // mSMleftback.angleMotor.set(ControlMode.PercentOutput, leftX);
-    System.out.println(leftX);
+    // System.out.println(leftX);
     // mSMrightfront.setAngle(Rotation2d.fromDegrees(leftX * 180));
     // mSMrightfront.angleMotor.set(ControlMode.Position, mSMrightfront.start + mSMrightfront.convertDeltaAngleToUnit(360.0));
       // mSMrightfront.driveMotor.set(ControlMode.PercentOutput, leftX);
@@ -67,7 +67,8 @@ public class DriveSubsystem extends SubsystemBase {
       SmartDashboard.putNumber("13_number", m13.getSelectedSensorPosition());
       SmartDashboard.putNumber("33_number", m33.getSelectedSensorPosition());
 
-
+      SmartDashboard.putNumber("13_module", mSMrightfront.angleMotor.getSelectedSensorPosition());
+      SmartDashboard.putNumber("33_module", mSMleftback.angleMotor.getSelectedSensorPosition());
   }
 
   public static double db(double x)
