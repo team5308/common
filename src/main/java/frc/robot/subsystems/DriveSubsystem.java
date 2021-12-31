@@ -29,7 +29,7 @@ public class DriveSubsystem extends SubsystemBase {
   public SwerveModule mSMleftback;
   public SwerveDrive mSwerveDrive;
 
-  public AHRS mNavX = new AHRS();
+  public AHRS mNavX;
 
   public double speedFactor = 0.5;
   
@@ -44,6 +44,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     mSwerveDrive = new SwerveDrive(mSMrightfront, mSMleftback);
 
+    mNavX = new AHRS();
     mNavX.calibrate();
   }
 
@@ -52,7 +53,7 @@ public class DriveSubsystem extends SubsystemBase {
     double leftX = smoothing(mXboxController.getX(Hand.kLeft));
     double leftY = smoothing(mXboxController.getY(Hand.kLeft));
     double v_rad = smoothing(mXboxController.getX(Hand.kRight));
-    Rotation2d cAngle = Rotation2d.fromDegrees(mNavX.getAngle());
+    Rotation2d cAngle = Rotation2d.fromDegrees(-mNavX.getAngle());
 
     if( Math.abs(leftX) > 0.05 || Math.abs(leftY) > 0.05 || Math.abs(v_rad) > 0.05) {
       ChassisSpeeds cSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(-leftY, leftX, v_rad, cAngle);

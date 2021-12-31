@@ -47,6 +47,9 @@ public class SwerveModule {
         this.driveMotor = new TalonFX(driveMotorID);
         this.angleMotor = new TalonFX(angleMotorID);
 
+        driveMotor.configFactoryDefault();
+        angleMotor.configFactoryDefault();
+
         if(isCANCoder) {
             angleEncoder = new SAECANCoder(encoderID);
         } else {
