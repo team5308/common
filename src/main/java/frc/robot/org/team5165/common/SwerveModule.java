@@ -31,6 +31,7 @@ public class SwerveModule {
     public SwerveAngleEncoder angleEncoder;
     public Translation2d moduleLoc;
     public String name;
+    public double angleOffset;
 
     public double start;
 
@@ -59,13 +60,16 @@ public class SwerveModule {
 
         
         TalonSRX mTalonSRX = new TalonSRX(encoderID);
+        mTalonSRX.configFactoryDefault();
         // mTalonSRX.ConfigRe(SensorTerm.Sum0, FeedbackDevice.CTRE_MagEncoder_Absolute);
         mTalonSRX.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute);
         mTalonSRX.configFeedbackNotContinuous(false, 1000);
         angleMotor.configRemoteFeedbackFilter(mTalonSRX.getDeviceID(), RemoteSensorSource.TalonSRX_SelectedSensor, 0);
         angleMotor.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0);
-        angleMotor.setSelectedSensorPosition(Utils.normalize(angleMotor.getSelectedSensorPosition() - s_offset, 4096));
-        angleMotor.configSelectedFeedbackCoefficient(360.0 / 4096.0);
+        
+        angleOffset = s_offset;
+        
+        angleMotor.configSelectedFeedbackCoefficient(1);
 
         // angleMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
         driveMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
@@ -109,7 +113,7 @@ public class SwerveModule {
                 Rotation2d.fromDegrees(getHeading()));
                 System.out.println("to: " + targetState.toString());
         }
-        // setSpeed(targetState.speedMetersPerSecond);
+        setSpeed(targetState.speedMetersPerSecond);
         setAngle(targetState.angle);
         // System.out.println(name + " Speed: " + targetState.speedMetersPerSecond + " Angle: " + targetState.angle + " current heading: " + getModuleHeading());
     }
@@ -141,7 +145,7 @@ public class SwerveModule {
     }
 
     public double getHeading() {
-        return normalizeDegAngle(angleMotor.getSelectedSensorPosition() );
+        return normalizeDegAngle((angleMotor.getSelectedSensorPosition() - angleOffset) / 4096.0 * 360.0);
     }
 
     //For built-in encoder
