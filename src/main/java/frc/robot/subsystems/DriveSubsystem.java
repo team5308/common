@@ -20,12 +20,16 @@ import frc.robot.Constants;
 import frc.robot.org.team5165.common.SwerveDrive;
 import frc.robot.org.team5165.common.SwerveModule;
 
+import com.kauailabs.navx.frc.AHRS;
+
 public class DriveSubsystem extends SubsystemBase {
   /** Creates a new DriveSubsystem. */
 
   public SwerveModule mSMrightfront;
   public SwerveModule mSMleftback;
   public SwerveDrive mSwerveDrive;
+
+  public AHRS mNavX = new AHRS();
 
   public double speedFactor = 0.5;
   
@@ -39,15 +43,19 @@ public class DriveSubsystem extends SubsystemBase {
     mSMrightfront.setName("Right Front");
 
     mSwerveDrive = new SwerveDrive(mSMrightfront, mSMleftback);
+
+    mNavX.calibrate();
   }
 
   @Override
   public void periodic() {
-    double leftX = db(mXboxController.getX(Hand.kLeft));
-    double leftY = db(mXboxController.getY(Hand.kLeft));
-    double v_rad = db(mXboxController.getX(Hand.kRight));
+    double leftX = smoothing(mXboxController.getX(Hand.kLeft));
+    double leftY = smoothing(mXboxController.getY(Hand.kLeft));
+    double v_rad = smoothing(mXboxController.getX(Hand.kRight));
+    Rotation2d cAngle = Rotation2d.fromDegrees(mNavX.getAngle());
+
     if( Math.abs(leftX) > 0.05 || Math.abs(leftY) > 0.05 || Math.abs(v_rad) > 0.05) {
-      ChassisSpeeds cSpeeds = new ChassisSpeeds(leftY, leftX, -v_rad);
+      ChassisSpeeds cSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(-leftY, leftX, v_rad, cAngle);
       mSwerveDrive.setMotion(cSpeeds);
     } else {
       mSwerveDrive.setZeroSpeed();
@@ -69,8 +77,8 @@ public class DriveSubsystem extends SubsystemBase {
       SmartDashboard.putNumber("33_module", mSMleftback.angleMotor.getSelectedSensorPosition());
   }
 
-  public static double db(double x)
+  public static double smoothing(double x)
   {
-    return Math.abs(x) < 0.2 ? 0 : x;
+    return x * Math.abs(x);
   }
 }
